@@ -3,10 +3,14 @@ FROM centos:7
 ENV TZ Asia/Shanghai
 ENV LANG en_US.UTF-8
 
+##############################################
+# buildx有缓存，注意判断目录或文件是否已经存在
+##############################################
+
 ####################
 # 设置YUM
 ####################
-RUN echo "exclude=*.i386 *.i586 *.i686" >> /etc/yum.conf
+RUN grep '*.i386 *.i586 *.i686' /etc/yum.conf || echo "exclude=*.i386 *.i586 *.i686" >> /etc/yum.conf
 RUN ulimit -n 1024 && yum install -y epel-release
 RUN ulimit -n 1024 && yum makecache
 
@@ -20,13 +24,13 @@ RUN ulimit -n 1024 && yum update -y
 ####################
 RUN ulimit -n 1024 && yum install -y iproute rsync yum-utils tree pwgen vim-enhanced wget curl screen bzip2 tcpdump unzip tar xz bash-completion-extras telnet chrony sudo strace openssh-server openssh-clients mlocate
 
-RUN echo set fencs=utf-8,gbk >>/etc/vimrc
+RUN grep 'set fencs=utf-8,gbk' /etc/vimrc || echo 'set fencs=utf-8,gbk' >>/etc/vimrc
 
 ####################
 # 设置文件句柄
 ####################
-RUN echo "*               soft   nofile            65535" >> /etc/security/limits.conf
-RUN echo "*               hard   nofile            65535" >> /etc/security/limits.conf
+RUN grep '*               soft   nofile            65535' /etc/security/limits.conf || echo "*               soft   nofile            65535" >> /etc/security/limits.conf
+RUN grep '*               hard   nofile            65535' /etc/security/limits.conf || echo "*               hard   nofile            65535" >> /etc/security/limits.conf
 
 ####################
 # 关闭SELINUX
@@ -37,7 +41,7 @@ RUN echo SELINUXTYPE=targeted>>/etc/selinux/config
 ####################
 # 配置SSH
 ####################
-RUN mkdir /root/.ssh
+RUN mkdir -p /root/.ssh
 RUN touch /root/.ssh/authorized_keys
 RUN chmod 600 /root/.ssh/authorized_keys
 COPY file/etc/ssh/sshd_config /etc/ssh/sshd_config
@@ -54,22 +58,24 @@ RUN ulimit -n 1024 && yum install -y tcl tk xz zlib
 ###########################
 ## 安装依赖：OpenSSL-1.1.1n
 ###########################
-COPY file/usr/local/openssl-1.1.1n/ /usr/local/
-RUN echo '/usr/local/openssl-1.1.1n/lib' >> /etc/ld.so.conf.d/openssl-1.1.1n.conf
+COPY file/usr/local/openssl-1.1.1n /usr/local/openssl-1.1.1n
+RUN echo '/usr/local/openssl-1.1.1n/lib' > /etc/ld.so.conf.d/openssl-1.1.1n.conf
+RUN ldconfig
+RUN ldconfig -p | grep openssl-1.1.1n 
 
 ###########################
 ## 安装Python311
 ###########################
-COPY file/usr/local/python-3.11.5/ /usr/local/
+COPY file/usr/local/python-3.11.5/ /usr/local/python-3.11.5/
 WORKDIR /usr/local
-RUN ln -s python-3.11.5 python3
+RUN test -L python3 || ln -s python-3.11.5 python3
 
 ARG py_bin_dir=/usr/local/python3/bin
 RUN echo "export PATH=${py_bin_dir}:${PATH}" > /etc/profile.d/python3.sh
 
 WORKDIR ${py_bin_dir}
-RUN ln -v -s pip3 pip311
-RUN ln -v -s python3 python311
+RUN test -L pip311 || ln -v -s pip3 pip311
+RUN test -L python311 || ln -v -s python3 python311
 
 RUN ./pip311 install --root-user-action=ignore -U pip
 
@@ -87,7 +93,6 @@ RUN ulimit -n 1024 && yum install -y xmlstarlet crudini
 # 清理
 ####################
 RUN ulimit -n 1024 && yum clean all
-RUN rm -rf /tmp/build_tmp
 
 ####################
 # 设置开机启动
