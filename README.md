@@ -79,6 +79,10 @@ ssh root@容器IP -v
 
 ## 镜像变更内容
 
+### 新增Yum源
+
+* epel
+
 ### 开放端口
 
 * SSHD->22（通过SSH+私钥方式连接容器的22端口，方便查看日志）
@@ -110,7 +114,6 @@ ssh root@容器IP -v
 
 #### 常用工具
 
-* epel-release
 * bash-completion-extras
 * bzip2
 * curl
