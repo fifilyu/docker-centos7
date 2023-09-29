@@ -42,20 +42,24 @@ RUN touch /root/.ssh/authorized_keys
 RUN chmod 600 /root/.ssh/authorized_keys
 COPY file/etc/ssh/sshd_config /etc/ssh/sshd_config
 
+RUN ssh-keygen -t rsa -b 2048 -N '' -f /etc/ssh/ssh_host_rsa_key
+RUN ssh-keygen -t ecdsa -b 256 -N '' -f /etc/ssh/ssh_host_ecdsa_key
+RUN ssh-keygen -t ed25519 -b 256 -N '' -f /etc/ssh/ssh_host_ed25519_key
+
 ####################
 # 安装Python3.11
 ####################
 RUN ulimit -n 1024 && yum install -y gcc gcc-c++ make libffi-devel bzip2-devel readline-devel ncurses-devel gdbm-devel tkinter tcl-devel tcl libuuid-devel zlib-devel zlib xz-devel xz tk-devel tk openssl-devel sqlite-devel
-RUN mkdir -p /root/downloads
+RUN mkdir -p /tmp/build_tmp
 
 ###########################
 ## 安装依赖：OpenSSL-1.1.1n
 ###########################
-WORKDIR /root/downloads
+WORKDIR /tmp/build_tmp
 RUN wget https://www.openssl.org/source/old/1.1.1/openssl-1.1.1n.tar.gz -O openssl-1.1.1n.tar.gz
 RUN tar xf openssl-1.1.1n.tar.gz
 
-WORKDIR /root/downloads/openssl-1.1.1n
+WORKDIR /tmp/build_tmp/openssl-1.1.1n
 RUN ./config --prefix=/usr/local/openssl-1.1.1n -fPIC
 RUN make -j4
 # not install document
@@ -68,13 +72,14 @@ RUN ldconfig -p | grep openssl-1.1.1n
 ###########################
 ## 编译安装Python311
 ###########################
-WORKDIR /root/downloads
+WORKDIR /tmp/build_tmp
 RUN wget https://www.python.org/ftp/python/3.11.5/Python-3.11.5.tar.xz -O Python-3.11.5.tar.xz
 RUN tar xf Python-3.11.5.tar.xz
 
-WORKDIR /root/downloads/Python-3.11.5
+WORKDIR /tmp/build_tmp/Python-3.11.5
 RUN ./configure --prefix=/usr/local/python-3.11.5 --enable-optimizations --with-openssl=/usr/local/openssl-1.1.1n  --with-ssl-default-suites=openssl --with-ensurepip --enable-loadable-sqlite-extensions
-RUN make -j4
+# clean非常重要
+RUN make clean && make -j4
 RUN make install
 
 ARG py_bin_dir=/usr/local/python-3.11.5/bin
@@ -84,12 +89,12 @@ WORKDIR ${py_bin_dir}
 RUN ln -v -s pip3 pip311
 RUN ln -v -s python3 python311
 
-RUN pip311 install --root-user-action=ignore -U pip
+RUN ./pip311 install --root-user-action=ignore -U pip
 
 ####################
 # 安装常用编辑工具
 ####################
-RUN pip311 install --root-user-action=ignore -U yq toml-cli
+RUN ./pip311 install --root-user-action=ignore -U yq toml-cli
 
 RUN wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -O /usr/local/bin/jq
 RUN chmod 755 /usr/local/bin/jq
@@ -100,8 +105,8 @@ RUN ulimit -n 1024 && yum install -y xmlstarlet crudini
 # 清理
 ####################
 RUN ulimit -n 1024 && yum remove -y gcc gcc-c++ make libffi-devel bzip2-devel readline-devel ncurses-devel gdbm-devel tcl-devel libuuid-devel zlib-devel xz-devel tk-devel openssl-devel sqlite-devel
-RUN ulimit -n 1024 && yum cleanall
-RUN rm -rf /root/downloads
+RUN ulimit -n 1024 && yum clean all
+RUN rm -rf /tmp/build_tmp
 
 ####################
 # 设置开机启动

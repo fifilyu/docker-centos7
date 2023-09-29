@@ -1,5 +1,6 @@
 #!/bin/sh
-service ssh start
+
+/sbin/sshd
 
 sleep 1
 
