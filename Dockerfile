@@ -97,6 +97,7 @@ RUN ulimit -n 1024 && yum install -y xmlstarlet crudini
 ####################
 # 清理
 ####################
+RUN rm -f /root/anaconda-ks.cfg
 RUN ulimit -n 1024 && yum clean all
 
 ####################
