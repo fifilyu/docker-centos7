@@ -10,7 +10,7 @@ cd docker-centos7
 docker buildx build -t fifilyu/centos7:latest .
 ```
 
-## 使用镜像
+## 使用方法
 
 ### 3.1 启动一个容器很简单
 
