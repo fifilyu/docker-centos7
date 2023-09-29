@@ -49,42 +49,26 @@ RUN ssh-keygen -t ed25519 -b 256 -N '' -f /etc/ssh/ssh_host_ed25519_key
 ####################
 # 安装Python3.11
 ####################
-RUN ulimit -n 1024 && yum install -y gcc gcc-c++ make libffi-devel bzip2-devel readline-devel ncurses-devel gdbm-devel tkinter tcl-devel tcl libuuid-devel zlib-devel zlib xz-devel xz tk-devel tk openssl-devel sqlite-devel
-RUN mkdir -p /tmp/build_tmp
+RUN ulimit -n 1024 && yum install -y tcl tk xz zlib
 
 ###########################
 ## 安装依赖：OpenSSL-1.1.1n
 ###########################
-WORKDIR /tmp/build_tmp
-RUN wget https://www.openssl.org/source/old/1.1.1/openssl-1.1.1n.tar.gz -O openssl-1.1.1n.tar.gz
-RUN tar xf openssl-1.1.1n.tar.gz
-
-WORKDIR /tmp/build_tmp/openssl-1.1.1n
-RUN ./config --prefix=/usr/local/openssl-1.1.1n -fPIC
-RUN make -j4
-# not install document
-RUN make install_sw install_ssldirs
-
+COPY file/usr/local/openssl-1.1.1n/ /usr/local/
 RUN echo '/usr/local/openssl-1.1.1n/lib' >> /etc/ld.so.conf
 RUN ldconfig
 RUN ldconfig -p | grep openssl-1.1.1n
 
 ###########################
-## 编译安装Python311
+## 安装Python311
 ###########################
-WORKDIR /tmp/build_tmp
-RUN wget https://www.python.org/ftp/python/3.11.5/Python-3.11.5.tar.xz -O Python-3.11.5.tar.xz
-RUN tar xf Python-3.11.5.tar.xz
+COPY file/usr/local/python-3.11.5/ /usr/local/
+WORKDIR /usr/local
+RUN ln -s python-3.11.5 python3
 
-WORKDIR /tmp/build_tmp/Python-3.11.5
-RUN ./configure --prefix=/usr/local/python-3.11.5 --enable-optimizations --with-openssl=/usr/local/openssl-1.1.1n  --with-ssl-default-suites=openssl --with-ensurepip --enable-loadable-sqlite-extensions
-# clean非常重要
-RUN make clean && make -j4
-RUN make install
-
-ARG py_bin_dir=/usr/local/python-3.11.5/bin
+ARG py_bin_dir=/usr/local/python3/bin
 RUN echo "export PATH=${py_bin_dir}:${PATH}" > /etc/profile.d/python3.sh
-RUN source /etc/bashrc
+
 WORKDIR ${py_bin_dir}
 RUN ln -v -s pip3 pip311
 RUN ln -v -s python3 python311
@@ -104,7 +88,6 @@ RUN ulimit -n 1024 && yum install -y xmlstarlet crudini
 ####################
 # 清理
 ####################
-RUN ulimit -n 1024 && yum remove -y gcc gcc-c++ make libffi-devel bzip2-devel readline-devel ncurses-devel gdbm-devel tcl-devel libuuid-devel zlib-devel xz-devel tk-devel openssl-devel sqlite-devel
 RUN ulimit -n 1024 && yum clean all
 RUN rm -rf /tmp/build_tmp
 
