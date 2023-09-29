@@ -55,9 +55,7 @@ RUN ulimit -n 1024 && yum install -y tcl tk xz zlib
 ## 安装依赖：OpenSSL-1.1.1n
 ###########################
 COPY file/usr/local/openssl-1.1.1n/ /usr/local/
-RUN echo '/usr/local/openssl-1.1.1n/lib' >> /etc/ld.so.conf
-RUN ldconfig
-RUN ldconfig -p | grep openssl-1.1.1n
+RUN echo '/usr/local/openssl-1.1.1n/lib' >> /etc/ld.so.conf.d/openssl-1.1.1n.conf
 
 ###########################
 ## 安装Python311
