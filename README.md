@@ -18,19 +18,19 @@ docker buildx build -t fifilyu/centos7:latest .
 docker run -d \
     --env LANG=en_US.UTF-8 \
     --env TZ=Asia/Shanghai \
-    --name foobar \
+    --name centos7 \
     fifilyu/centos7:latest
 ```
 
 显示容器IP：
 
 ```bash
-docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' foobar
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' centos7
 ```
 查看 `root` 用户随机密码：
 
 ```bash
-docker logs foobar
+docker logs centos7
 ```
 
 SSH远程连接：
@@ -45,7 +45,7 @@ ssh root@容器IP -v
         --env LANG=en_US.UTF-8 \
 	    --env TZ=Asia/Shanghai \
         -e PUBLIC_STR="$(<~/.ssh/fifilyu@archlinux.pub)" \
-        --name foobar_key \
+        --name centos7_key \
         fifilyu/centos7:latest
 
 效果同上。另外，可以通过SSH无密码登录容器。
@@ -62,7 +62,7 @@ ssh root@容器IP -v
         --env LANG=en_US.UTF-8 \
 	    --env TZ=Asia/Shanghai \
         -p 1022:22 \
-        --name foobar_port \
+        --name centos7_port \
         fifilyu/centos7:latest
 
 执行 `ssh root@127.0.0.1 -p 1022 -v` 测试SSH端口状态
