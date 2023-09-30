@@ -10,7 +10,7 @@ cd docker-centos7
 docker buildx build -t fifilyu/centos7:latest .
 ```
 
-## 使用镜像
+## 使用方法
 
 ### 3.1 启动一个容器很简单
 
@@ -41,12 +41,14 @@ ssh root@容器IP -v
 
 ### 3.2 启动带公钥的容器
 
-    docker run -d \
-        --env LANG=en_US.UTF-8 \
-	    --env TZ=Asia/Shanghai \
-        -e PUBLIC_STR="$(<~/.ssh/fifilyu@archlinux.pub)" \
-        --name centos7_key \
-        fifilyu/centos7:latest
+```bash
+docker run -d \
+--env LANG=en_US.UTF-8 \
+    --env TZ=Asia/Shanghai \
+-e PUBLIC_STR="$(<~/.ssh/fifilyu@archlinux.pub)" \
+--name centos7_key \
+fifilyu/centos7:latest
+```
 
 效果同上。另外，可以通过SSH无密码登录容器。
 
@@ -58,12 +60,14 @@ ssh root@容器IP -v
 
 ### 3.3 启动容器时映射端口
 
-    docker run -d \
-        --env LANG=en_US.UTF-8 \
-	    --env TZ=Asia/Shanghai \
-        -p 1022:22 \
-        --name centos7_port \
-        fifilyu/centos7:latest
+```bash
+docker run -d \
+--env LANG=en_US.UTF-8 \
+    --env TZ=Asia/Shanghai \
+-p 1022:22 \
+--name centos7_port \
+fifilyu/centos7:latest
+```
 
 执行 `ssh root@127.0.0.1 -p 1022 -v` 测试SSH端口状态
 
@@ -71,11 +75,11 @@ ssh root@容器IP -v
 
 自定义配置参数，可以直接通过Docker命令进入bash编辑：
 
-    docker exec -it 容器名称 bash
+`docker exec -it 容器名称 bash`
 
 或者通过SSH+私钥方式连接容器的22端口：
 
-    ssh root@容器IP
+`ssh root@容器IP`
 
 ## 镜像变更内容
 
