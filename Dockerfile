@@ -76,7 +76,7 @@ WORKDIR /usr/local
 RUN test -L python3 || ln -s python-3.11.5 python3
 
 ARG py_bin_dir=/usr/local/python3/bin
-RUN echo "export PATH=${py_bin_dir}:${PATH}" > /etc/profile.d/python3.sh
+RUN echo "export PATH=${py_bin_dir}:\${PATH}" > /etc/profile.d/python3.sh
 
 WORKDIR ${py_bin_dir}
 RUN test -L pip311 || ln -v -s pip3 pip311
