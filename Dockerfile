@@ -89,8 +89,9 @@ RUN ./pip311 install --root-user-action=ignore -U pip
 ####################
 RUN ./pip311 install --root-user-action=ignore -U yq toml-cli
 
-RUN wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -O /usr/local/bin/jq
+COPY file/usr/local/bin/jq /usr/local/bin/jq
 RUN chmod 755 /usr/local/bin/jq
+
 
 RUN ulimit -n 1024 && yum install -y xmlstarlet crudini
 
