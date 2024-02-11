@@ -23,6 +23,7 @@ RUN ulimit -n 1024 && yum update -y
 # 中文环境支持
 ####################
 RUN ulimit -n 1024 && yum install -y wqy-microhei-fonts wqy-zenhei-fonts wqy-unibit-fonts
+RUN echo 'export LANG=en_US.UTF-8' >> /etc/bashrc
 
 ####################
 # 安装常用软件包
