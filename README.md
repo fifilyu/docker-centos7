@@ -98,16 +98,21 @@ docker run -d \
 
 ### 文件列表
 
-- /etc/security/limits.conf
-- /etc/yum.conf
-- /etc/selinux/config
-- /root/.ssh/authorized_keys
+* /etc/ssh/sshd_config
+* /etc/security/limits.conf
+* /etc/yum.conf
+* /etc/selinux/config
+* /etc/profile.d/python3.sh
+* /usr/local/bin/jq
+* /usr/local/python3
+* /usr/local/python-3.12.2
+* /root/.ssh/authorized_keys
 
 ### 软件包
 
 #### Python
 
-- python311
+- python312
 
 #### 命令行编辑工具
 

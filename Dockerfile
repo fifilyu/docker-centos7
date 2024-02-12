@@ -57,7 +57,7 @@ RUN ssh-keygen -t ecdsa -b 256 -N '' -f /etc/ssh/ssh_host_ecdsa_key
 RUN ssh-keygen -t ed25519 -b 256 -N '' -f /etc/ssh/ssh_host_ed25519_key
 
 ####################
-# 安装Python3.11
+# 安装Python3.12
 ####################
 RUN ulimit -n 1024 && yum install -y tcl tk xz zlib
 
@@ -70,25 +70,26 @@ RUN ldconfig
 RUN ldconfig -p | grep openssl-1.1.1n 
 
 ###########################
-## 安装Python311
+## 安装Python312
 ###########################
-COPY file/usr/local/python-3.11.5/ /usr/local/python-3.11.5/
+COPY file/usr/local/python-3.12.2/ /usr/local/python-3.12.2/
 WORKDIR /usr/local
-RUN test -L python3 || ln -s python-3.11.5 python3
+RUN test -L python3 || ln -s python-3.12.2 python3
 
 ARG py_bin_dir=/usr/local/python3/bin
 RUN echo "export PATH=${py_bin_dir}:\${PATH}" > /etc/profile.d/python3.sh
 
 WORKDIR ${py_bin_dir}
-RUN test -L pip311 || ln -v -s pip3 pip311
-RUN test -L python311 || ln -v -s python3 python311
+RUN test -L pip312 || ln -v -s pip3 pip312
+RUN test -L python312 || ln -v -s python3 python312
 
-RUN ./pip311 install --root-user-action=ignore -U pip
+RUN ./pip312 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+RUN ./pip312 install --root-user-action=ignore -U pip
 
 ####################
 # 安装常用编辑工具
 ####################
-RUN ./pip311 install --root-user-action=ignore -U yq toml-cli
+RUN ./pip312 install --root-user-action=ignore -U yq toml-cli
 
 COPY file/usr/local/bin/jq /usr/local/bin/jq
 RUN chmod 755 /usr/local/bin/jq
