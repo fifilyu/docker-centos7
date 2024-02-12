@@ -12,7 +12,7 @@ docker buildx build -t fifilyu/centos7:latest .
 
 ## 使用方法
 
-### 3.1 启动一个容器很简单
+### 启动一个容器很简单
 
 ```bash
 docker run -d \
@@ -40,7 +40,7 @@ SSH 远程连接：
 ssh root@容器IP -v
 ```
 
-### 3.2 启动带公钥的容器
+### 启动带公钥的容器
 
 ```bash
 docker run -d \
@@ -59,7 +59,7 @@ docker run -d \
 
     PUBLIC_STR="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLGJVJI1Cqr59VH1NVQgPs08n7e/HRc2Q8AUpOWGoJpVzIgjO+ipjqwnxh3eiBd806eXIIa5OFwRm0fYfMFxBOdo3l5qGtBe82PwTotdtpcacP5Dkrn+HZ1kG+cf0BNSF5oXbTCTrqY12/T8h4035BXyRw7+MuVPiCUhydYs3RgsODA47ZR3owgjvPsayUd5MrD8gidGqv1zdyW9nQXnXB7m9Sn9Mg8rk6qBxQUbtMN9ez0BFrUGhXCkW562zhJjP5j4RLVfvL2N1bWT9EoFTCjk55pv58j+PTNEGUmu8PrU8mtgf6zQO871whTD8/H6brzaMwuB5Rd5OYkVir0BXj fifilyu@archlinux"
 
-### 3.3 启动容器时映射端口
+### 启动容器时映射端口
 
 ```bash
 docker run -d \
