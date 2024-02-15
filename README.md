@@ -7,7 +7,7 @@ CentOS7 Docker 镜像
 ```bash
 git clone https://github.com/fifilyu/docker-centos7.git
 cd docker-centos7
-docker buildx build -t fifilyu/centos7:latest .
+sh build.sh
 ```
 
 ## 使用方法
@@ -46,7 +46,7 @@ ssh root@容器IP -v
 docker run -d \
     --env LANG=en_US.UTF-8 \
     --env TZ=Asia/Shanghai \
-    -e PUBLIC_STR="$(<~/.ssh/fifilyu@archlinux.pub)" \
+    --env PUBLIC_STR="$(<~/.ssh/fifilyu@archlinux.pub)" \
     --name centos7_key \
     fifilyu/centos7:latest
 ```
@@ -98,15 +98,15 @@ docker run -d \
 
 ### 文件列表
 
-* /etc/ssh/sshd_config
-* /etc/security/limits.conf
-* /etc/yum.conf
-* /etc/selinux/config
-* /etc/profile.d/python3.sh
-* /usr/local/bin/jq
-* /usr/local/python3
-* /usr/local/python-3.12.2
-* /root/.ssh/authorized_keys
+- /etc/ssh/sshd_config
+- /etc/security/limits.conf
+- /etc/yum.conf
+- /etc/selinux/config
+- /etc/profile.d/python3.sh
+- /usr/local/bin/jq
+- /usr/local/python3
+- /usr/local/python-3.12.2
+- /root/.ssh/authorized_keys
 
 ### 软件包
 
