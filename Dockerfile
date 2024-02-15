@@ -29,6 +29,8 @@ RUN echo 'export LANG=en_US.UTF-8' >> /etc/bashrc
 # 安装常用软件包
 ####################
 RUN ulimit -n 1024 && yum install -y iproute rsync yum-utils tree pwgen vim-enhanced wget curl screen bzip2 tcpdump unzip tar xz bash-completion-extras telnet chrony sudo strace openssh-server openssh-clients mlocate
+# 常用编译环境组件
+RUN ulimit -n 1024 && yum install -y gcc make openssl-devel
 
 RUN grep 'set fencs=utf-8,gbk' /etc/vimrc || echo 'set fencs=utf-8,gbk' >>/etc/vimrc
 
