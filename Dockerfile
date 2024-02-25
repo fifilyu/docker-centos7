@@ -10,7 +10,7 @@ ENV LANG en_US.UTF-8
 ####################
 # 设置YUM
 ####################
-RUN grep '*.i386 *.i586 *.i686' /etc/yum.conf || echo "exclude=*.i386 *.i586 *.i686" >> /etc/yum.conf
+RUN grep '*.i386 *.i586 *.i686' /etc/yum.conf || echo "exclude=*.i386 *.i586 *.i686" >>/etc/yum.conf
 RUN ulimit -n 1024 && yum install -y epel-release
 RUN ulimit -n 1024 && yum makecache
 
@@ -23,7 +23,6 @@ RUN ulimit -n 1024 && yum update -y
 # 中文环境支持
 ####################
 RUN ulimit -n 1024 && yum install -y wqy-microhei-fonts wqy-zenhei-fonts wqy-unibit-fonts
-RUN echo 'export LANG=en_US.UTF-8' >> /etc/bashrc
 
 ####################
 # 安装常用软件包
@@ -37,14 +36,14 @@ RUN grep 'set fencs=utf-8,gbk' /etc/vimrc || echo 'set fencs=utf-8,gbk' >>/etc/v
 ####################
 # 设置文件句柄
 ####################
-RUN grep '*               soft   nofile            65535' /etc/security/limits.conf || echo "*               soft   nofile            65535" >> /etc/security/limits.conf
-RUN grep '*               hard   nofile            65535' /etc/security/limits.conf || echo "*               hard   nofile            65535" >> /etc/security/limits.conf
+RUN grep '*               soft   nofile            65535' /etc/security/limits.conf || echo "*               soft   nofile            65535" >>/etc/security/limits.conf
+RUN grep '*               hard   nofile            65535' /etc/security/limits.conf || echo "*               hard   nofile            65535" >>/etc/security/limits.conf
 
 ####################
 # 关闭SELINUX
 ####################
-RUN echo SELINUX=disabled>/etc/selinux/config
-RUN echo SELINUXTYPE=targeted>>/etc/selinux/config
+RUN echo SELINUX=disabled >/etc/selinux/config
+RUN echo SELINUXTYPE=targeted >>/etc/selinux/config
 
 ####################
 # 配置SSH
@@ -67,9 +66,9 @@ RUN ulimit -n 1024 && yum install -y tcl tk xz zlib
 ## 安装依赖：OpenSSL-1.1.1n
 ###########################
 COPY file/usr/local/openssl-1.1.1n /usr/local/openssl-1.1.1n
-RUN echo '/usr/local/openssl-1.1.1n/lib' > /etc/ld.so.conf.d/openssl-1.1.1n.conf
+RUN echo '/usr/local/openssl-1.1.1n/lib' >/etc/ld.so.conf.d/openssl-1.1.1n.conf
 RUN ldconfig
-RUN ldconfig -p | grep openssl-1.1.1n 
+RUN ldconfig -p | grep openssl-1.1.1n
 
 ###########################
 ## 安装Python312
@@ -79,7 +78,7 @@ WORKDIR /usr/local
 RUN test -L python3 || ln -s python-3.12.2 python3
 
 ARG py_bin_dir=/usr/local/python3/bin
-RUN echo "export PATH=${py_bin_dir}:\${PATH}" > /etc/profile.d/python3.sh
+RUN echo "export PATH=${py_bin_dir}:\${PATH}" >/etc/profile.d/python3.sh
 
 WORKDIR ${py_bin_dir}
 RUN test -L pip312 || ln -v -s pip3 pip312
@@ -96,8 +95,17 @@ RUN ./pip312 install --root-user-action=ignore -U yq toml-cli
 COPY file/usr/local/bin/jq /usr/local/bin/jq
 RUN chmod 755 /usr/local/bin/jq
 
-
 RUN ulimit -n 1024 && yum install -y xmlstarlet crudini
+
+####################
+# BASH设置
+####################
+RUN echo "alias ll='ls -l --color=auto --group-directories-first'" >>/root/.bashrc
+
+####################
+# Locale设置
+####################
+RUN echo 'LANG="en_US.UTF-8"' >/etc/locale.conf
 
 ####################
 # 清理
